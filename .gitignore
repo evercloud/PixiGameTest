@@ -1,7 +1,3 @@
-# sublime text files
-*.sublime*
-*.*~*.TMP
-
 # temp files
 .DS_Store
 Thumbs.db
@@ -24,11 +20,9 @@ npm-debug.log
 node_modules
 docs/
 
-# jetBrains IDE ignores
-.idea
-
-# tsc output
 compile
 dist
 lib
 index.d.ts
+.vscode
+.cache
