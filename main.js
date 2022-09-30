@@ -19,20 +19,18 @@ bg.beginFill(0x9ACB59);
 bg.drawRect(0, 0, app.screen.width, app.screen.height);
 bg.endFill();
 app.stage.addChild(bg);
+//draw grid lines
 var lines = new PIXI.Graphics();
-//draw lines
 for (var i = 0; i < gridSpacing; i++) {
-    for (var j = 0; j < gridSpacing; j++) {
-        // draw a shape
-        console.log("DRAW LINE");
-        lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
-        lines.lineStyle(4, 0x91C250, 1);
-        lines.moveTo(i * gridWidth, 0);
-        lines.lineTo(i * gridWidth, app.screen.width);
-        lines.moveTo(0, j * gridHeight);
-        lines.lineTo(app.screen.height, j * gridHeight);
-        lines.endFill();
-    }
+    // draw a shape
+    console.log("DRAW LINE");
+    lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
+    lines.lineStyle(4, 0x91C250, 1);
+    lines.moveTo(i * gridWidth, 0);
+    lines.lineTo(i * gridWidth, app.screen.width);
+    lines.moveTo(0, i * gridHeight);
+    lines.lineTo(app.screen.height, i * gridHeight);
+    lines.endFill();
 }
 app.stage.addChild(lines);
 //create player

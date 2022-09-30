@@ -21,17 +21,15 @@ app.stage.addChild(bg);
 //draw grid lines
 const lines = new PIXI.Graphics();
 for (var i = 0; i < gridSpacing; i++) {
-    for (var j = 0; j < gridSpacing; j++) {
-        // draw a shape
-        console.log("DRAW LINE");
-        lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
-        lines.lineStyle(4, 0x91C250, 1);
-        lines.moveTo(i * gridWidth, 0);
-        lines.lineTo(i * gridWidth, app.screen.width);
-        lines.moveTo(0, j * gridHeight);
-        lines.lineTo(app.screen.height, j * gridHeight);
-        lines.endFill();
-    }
+    // draw a shape
+    console.log("DRAW LINE");
+    lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
+    lines.lineStyle(4, 0x91C250, 1);
+    lines.moveTo(i * gridWidth, 0);
+    lines.lineTo(i * gridWidth, app.screen.width);
+    lines.moveTo(0, i * gridHeight);
+    lines.lineTo(app.screen.height, i * gridHeight);
+    lines.endFill();
 }
 app.stage.addChild(lines);
 
