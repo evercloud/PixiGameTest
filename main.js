@@ -1,12 +1,4 @@
 // import * as PIXI from 'pixi.js';
-// import { debug } from "console";
-//initialize app
-var app = new PIXI.Application({ width: 800, height: 800 });
-document.body.appendChild(app.view);
-//useful fields:
-var gridSpacing = 15;
-var gridWidth = app.screen.width / gridSpacing;
-var gridHeight = app.screen.height / gridSpacing;
 var Direction;
 (function (Direction) {
     Direction[Direction["Up"] = 0] = "Up";
@@ -14,14 +6,37 @@ var Direction;
     Direction[Direction["Left"] = 2] = "Left";
     Direction[Direction["Right"] = 3] = "Right";
 })(Direction || (Direction = {}));
+//initialize app
+var app = new PIXI.Application({ width: 800, height: 800 });
+document.body.appendChild(app.view);
+//useful fields:
+var gridSpacing = 15;
+var gridWidth = app.screen.width / gridSpacing;
+var gridHeight = app.screen.height / gridSpacing;
 //draw background
 var bg = new PIXI.Graphics();
 bg.beginFill(0x9ACB59);
 bg.drawRect(0, 0, app.screen.width, app.screen.height);
 bg.endFill();
 app.stage.addChild(bg);
+var lines = new PIXI.Graphics();
+//draw lines
+for (var i = 0; i < gridSpacing; i++) {
+    for (var j = 0; j < gridSpacing; j++) {
+        // draw a shape
+        console.log("DRAW LINE");
+        lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
+        lines.lineStyle(4, 0x91C250, 1);
+        lines.moveTo(i * gridWidth, 0);
+        lines.lineTo(i * gridWidth, app.screen.width);
+        lines.moveTo(0, j * gridHeight);
+        lines.lineTo(app.screen.height, j * gridHeight);
+        lines.endFill();
+    }
+}
+app.stage.addChild(lines);
 //create player
-var playerSpeed = 3;
+var playerSpeed = 5;
 var playerBody = new PIXI.Graphics();
 playerBody.beginFill(0x3F6FDE);
 playerBody.drawRect(-gridWidth / 2, -gridHeight / 2, gridWidth, gridHeight);
@@ -105,6 +120,7 @@ function IsOutOfBounds(x, y) {
     return false;
 }
 function SetNextDirection(_direction) {
+    console.log("PRESSED " + _direction.toString());
     nextDirection = _direction;
 }
 var thresholdDistance = 1;

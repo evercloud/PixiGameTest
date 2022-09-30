@@ -1,6 +1,6 @@
 // import * as PIXI from 'pixi.js';
 
-// import { debug } from "console";
+enum Direction { Up, Down, Left, Right }
 
 //initialize app
 let app = new PIXI.Application({ width: 800, height: 800 });
@@ -11,8 +11,6 @@ var gridSpacing: number = 15;
 var gridWidth: number = app.screen.width / gridSpacing;
 var gridHeight: number = app.screen.height / gridSpacing;
 
-enum Direction { Up, Down, Left, Right }
-
 //draw background
 const bg = new PIXI.Graphics();
 bg.beginFill(0x9ACB59);
@@ -20,8 +18,25 @@ bg.drawRect(0, 0, app.screen.width, app.screen.height);
 bg.endFill();
 app.stage.addChild(bg);
 
+//draw grid lines
+const lines = new PIXI.Graphics();
+for (var i = 0; i < gridSpacing; i++) {
+    for (var j = 0; j < gridSpacing; j++) {
+        // draw a shape
+        console.log("DRAW LINE");
+        lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
+        lines.lineStyle(4, 0x91C250, 1);
+        lines.moveTo(i * gridWidth, 0);
+        lines.lineTo(i * gridWidth, app.screen.width);
+        lines.moveTo(0, j * gridHeight);
+        lines.lineTo(app.screen.height, j * gridHeight);
+        lines.endFill();
+    }
+}
+app.stage.addChild(lines);
+
 //create player
-let playerSpeed: number = 3;
+let playerSpeed: number = 5;
 const playerBody = new PIXI.Graphics();
 playerBody.beginFill(0x3F6FDE);
 playerBody.drawRect(-gridWidth / 2, -gridHeight / 2, gridWidth, gridHeight);
@@ -113,6 +128,7 @@ function IsOutOfBounds(x: number, y: number): boolean {
 }
 
 function SetNextDirection(_direction: Direction) {
+    console.log("PRESSED " + _direction.toString());
     nextDirection = _direction;
 }
 
