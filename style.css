@@ -3,7 +3,9 @@
   width: 800px;
   height: 800px;
 
-  /* TESTs:*/
+
+  /* --TESTS--*/
+  outline: 5px solid darkgreen;
   /* background-color: rgba(154, 203, 89, 1); */
   /* background-color: rgba(0, 0, 0, 0); */
   /* outline: thick solid lightgreen" */
