@@ -44,15 +44,16 @@ app.stage.addChild(playerBody);
 let currentDirection = Direction.Right;
 let nextDirection = Direction.Right;
 
-//add player keys listerner...
+//setup controls
+let keysPressed = {};
 document.addEventListener('keydown', onKeyDown);
-//...and handler
+document.addEventListener('keyup', onKeyUp);
+
 function onKeyDown(key: KeyboardEvent) {
-    // if key is pressed, set next direction
-    if (key.keyCode === 87) { SetNextDirection(Direction.Up); } //W
-    if (key.keyCode === 83) { SetNextDirection(Direction.Down); } //S
-    if (key.keyCode === 65) { SetNextDirection(Direction.Left); } //A
-    if (key.keyCode === 68) { SetNextDirection(Direction.Right); } //D
+    keysPressed[key.keyCode] = true;
+}
+function onKeyUp(key: KeyboardEvent) {
+    keysPressed[key.keyCode] = false;
 }
 
 //add timer text
@@ -71,6 +72,7 @@ app.ticker.add(Update);
 
 function Update() {
     UpdateTimerText();
+    UpdateControls();
 
     //"SNAPPY" OLD VERSION
     // timer += app.ticker.elapsedMS;
@@ -88,8 +90,19 @@ function UpdateTimerText() {
     timerText.text = 'SURVIVAL TIME: ' + Math.round(app.ticker.lastTime / 1000);
 }
 
+function UpdateControls() {
+    // if key is pressed, set next direction
+    if (keysPressed[87]) { SetNextDirection(Direction.Up); } //W
+    else if (keysPressed[83]) { SetNextDirection(Direction.Down); } //S
+    if (keysPressed[65]) { SetNextDirection(Direction.Left); } //A
+    else if (keysPressed[68]) { SetNextDirection(Direction.Right); } //D
+}
+
 //PLAYER FUNCTIONS
 function UpdatePlayerPosition() {
+    if (currentDirection != nextDirection)
+        HandleChangeDirection();
+
     //update with current direction
     switch (currentDirection) {
         case Direction.Up:
@@ -108,17 +121,13 @@ function UpdatePlayerPosition() {
             break;
     }
 
-    if (currentDirection != nextDirection)
-        HandleChangeDirection();
-
     if (IsOutOfBounds(playerBody.position.x, playerBody.position.y))
         TriggerGameOver();
 }
 
-
 function IsOutOfBounds(x: number, y: number): boolean {
-    if (x < 0 + gridWidth / 2 || x > app.screen.width - gridWidth / 2 ||
-        y < 0 + gridHeight / 2 || y > app.screen.width - gridHeight / 2)
+    if (x + threshold < 0 + gridWidth / 2 || x - threshold > app.screen.width - gridWidth / 2 ||
+        y + threshold < 0 + gridHeight / 2 || y - threshold > app.screen.width - gridHeight / 2)
         return true;
     return false;
 }
@@ -128,7 +137,7 @@ function SetNextDirection(_direction: Direction) {
     nextDirection = _direction;
 }
 
-let thresholdDistance: number = 1;
+let threshold: number = 3;
 function HandleChangeDirection() {
     let distance: number;
     let temp: number;
@@ -139,7 +148,7 @@ function HandleChangeDirection() {
             temp = Math.round((playerBody.y - gridHeight / 2) / gridHeight);
             distance = Math.abs(temp * gridHeight - (playerBody.y - gridHeight / 2));
 
-            if (distance >= thresholdDistance)
+            if (distance >= threshold)
                 return;
 
             playerBody.y = (temp * gridHeight) + gridHeight / 2;
@@ -150,7 +159,7 @@ function HandleChangeDirection() {
             temp = Math.round((playerBody.x - gridWidth / 2) / gridWidth);
             distance = Math.abs(temp * gridWidth - (playerBody.x - gridWidth / 2));
 
-            if (distance >= thresholdDistance)
+            if (distance >= threshold)
                 return;
 
             playerBody.x = (temp * gridWidth) + gridWidth / 2;
