@@ -22,8 +22,6 @@ app.stage.addChild(bg);
 //draw grid lines
 var lines = new PIXI.Graphics();
 for (var i = 0; i < gridSpacing; i++) {
-    // draw a shape
-    console.log("DRAW LINE");
     lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
     lines.lineStyle(4, 0x91C250, 1);
     lines.moveTo(i * gridWidth, 0);
@@ -128,22 +126,20 @@ function HandleChangeDirection() {
     switch (currentDirection) {
         case Direction.Up:
         case Direction.Down:
-            temp = Math.round(playerBody.y / gridHeight);
-            distance = Math.abs(temp * gridHeight - playerBody.y);
-            // timerText.text = 'distance: ' + distance + " and grid point:" + temp;
+            temp = Math.round((playerBody.y - gridHeight / 2) / gridHeight);
+            distance = Math.abs(temp * gridHeight - (playerBody.y - gridHeight / 2));
             if (distance >= thresholdDistance)
                 return;
-            playerBody.y = temp * gridHeight;
+            playerBody.y = (temp * gridHeight) + gridHeight / 2;
             currentDirection = nextDirection;
             break;
         case Direction.Left:
         case Direction.Right:
-            temp = Math.round(playerBody.x / gridWidth);
-            distance = Math.abs(temp * gridWidth - playerBody.x);
-            // timerText.text = 'distance: ' + distance + " and grid point:" + temp;
+            temp = Math.round((playerBody.x - gridWidth / 2) / gridWidth);
+            distance = Math.abs(temp * gridWidth - (playerBody.x - gridWidth / 2));
             if (distance >= thresholdDistance)
                 return;
-            playerBody.x = temp * gridWidth;
+            playerBody.x = (temp * gridWidth) + gridWidth / 2;
             currentDirection = nextDirection;
             break;
         default:
