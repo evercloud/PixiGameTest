@@ -1,26 +1,27 @@
 // import * as PIXI from 'pixi.js';
+import { Application, Graphics, Text } from 'pixi.js';
 
 enum Direction { Up, Down, Left, Right }
 
 //initialize app
-let app = new PIXI.Application({ width: 800, height: 800 });
+let app = new Application({ width: 800, height: 800 });
 document.body.appendChild(app.view);
 
 //useful fields:
-var gridSpacing: number = 15;
-var gridWidth: number = app.screen.width / gridSpacing;
-var gridHeight: number = app.screen.height / gridSpacing;
+let gridSpacing: number = 15;
+let gridWidth: number = app.screen.width / gridSpacing;
+let gridHeight: number = app.screen.height / gridSpacing;
 
 //draw background
-const bg = new PIXI.Graphics();
+const bg = new Graphics();
 bg.beginFill(0x9ACB59);
 bg.drawRect(0, 0, app.screen.width, app.screen.height);
 bg.endFill();
 app.stage.addChild(bg);
 
 //draw grid lines
-const lines = new PIXI.Graphics();
-for (var i = 0; i < gridSpacing; i++) {
+const lines = new Graphics();
+for (let i = 0; i < gridSpacing; i++) {
     lines.beginFill(0x9ACB59); //same color as bg, no transparency needed
     lines.lineStyle(4, 0x91C250, 1);
     lines.moveTo(i * gridWidth, 0);
@@ -33,7 +34,7 @@ app.stage.addChild(lines);
 
 //create player
 let playerSpeed: number = 5;
-const playerBody = new PIXI.Graphics();
+const playerBody = new Graphics();
 playerBody.beginFill(0x3F6FDE);
 playerBody.drawRect(-gridWidth / 2, -gridHeight / 2, gridWidth, gridHeight);
 playerBody.endFill();
@@ -57,7 +58,7 @@ function onKeyUp(key: KeyboardEvent) {
 }
 
 //add timer text
-const timerText = app.stage.addChild(new PIXI.Text('SURVIVAL TIME: ', {
+const timerText = app.stage.addChild(new Text('SURVIVAL TIME: ', {
     fontFamily: 'Arial',
     fontSize: 24,
     fill: 0xffffff,
@@ -73,13 +74,6 @@ app.ticker.add(Update);
 function Update() {
     UpdateTimerText();
     UpdateControls();
-
-    //"SNAPPY" OLD VERSION
-    // timer += app.ticker.elapsedMS;
-    // if (timer <= moveDuration)
-    //     return;
-    // timer = 0;
-
     UpdatePlayerPosition();
 
     //update enemy positions
@@ -91,7 +85,7 @@ function UpdateTimerText() {
 }
 
 function UpdateControls() {
-    // if key is pressed, set next direction
+    // apparently handling key presses with some kind of priority helps smoothness a little bit
     if (keysPressed[87]) { SetNextDirection(Direction.Up); } //W
     else if (keysPressed[83]) { SetNextDirection(Direction.Down); } //S
     if (keysPressed[65]) { SetNextDirection(Direction.Left); } //A
