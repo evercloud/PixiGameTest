@@ -1,15 +1,8 @@
-import { Application, Graphics } from 'pixi.js';
+import { Graphics, Ticker } from 'pixi.js';
 import { Direction } from './main';
 import { GameHandler } from './game-handler';
 
-// export interface IMovable {
-// name: string;
-// IsPlayer: boolean;
-//   SetNextDirection();
-//   UpdatePosition();
-// }
-
-class Character {
+export class Character {
   gameHandler: GameHandler;
   speed: number;
   body = new Graphics();
@@ -20,31 +13,50 @@ class Character {
   gridWidth: number;
   threshold: number = 3;
 
-  constructor(gameHandler: GameHandler, color: number, startX: number, startY: number, width: number,
-    height: number, startDirection: Direction, speed: number) {
+  constructor(gameHandler: GameHandler, color: number, posX: number, posY: number, width: number,
+    height: number, speed: number) {
     this.gameHandler = gameHandler;
     this.color = color;
     this.body.beginFill(this.color);
     this.gridWidth = width;
     this.gridHeight = height;
-    
-    this.body.drawRect(startX, startY, this.gridWidth, this.gridHeight);
+
+    this.body.drawRect(-this.gridWidth / 2, -this.gridHeight / 2, this.gridWidth, this.gridHeight);
     this.body.endFill();
-    this.body.position.x = (this.gameHandler.appRef.screen.width / 2);
-    this.body.position.y = (this.gameHandler.appRef.screen.height / 2);
+    this.body.position.x = posX;
+    this.body.position.y = posY;
     this.gameHandler.appRef.stage.addChild(this.body);
 
-    this.currentDirection = startDirection;
-    this.nextDirection = startDirection;
+    this.currentDirection = this.GetRandomDirection();
+    this.nextDirection = this.currentDirection;
     this.speed = speed;
+  }
+
+  GetRandomDirection(): Direction {
+    let rand = Math.floor(Math.random() * 4);
+    switch (rand) {
+      case 0: return Direction.Up;
+      case 1: return Direction.Down;
+      case 2: return Direction.Left;
+      case 3: return Direction.Right;
+      default: return Direction.Right;
+    }
   }
 
   SetNextDirection(direction: Direction) {
     this.nextDirection = direction;
   }
 
-  UpdatePosition() { }
+  GetPositionX(): number {
+    return this.body.position.x;
+  }
 
+  GetPositionY(): number {
+    return this.body.position.y;
+  }
+
+
+  UpdatePosition() { }
 
   HandleChangeDirection() {
     let distance: number;
@@ -87,6 +99,35 @@ export class BoundedCharacter extends Character {
       y - this.threshold > this.gameHandler.appRef.screen.width - this.gridHeight / 2)
       return true;
     return false;
+  }
+
+  Update() {
+    this.UpdatePosition();
+  }
+
+  UpdatePosition() {
+    if (this.currentDirection != this.nextDirection)
+      this.HandleChangeDirection();
+
+    switch (this.currentDirection) {
+      case Direction.Up:
+        this.body.position.y -= this.gridHeight * this.speed * Ticker.shared.elapsedMS / 1000;
+        break;
+      case Direction.Down:
+        this.body.position.y += this.gridHeight * this.speed * Ticker.shared.elapsedMS / 1000;
+        break;
+      case Direction.Left:
+        this.body.position.x -= this.gridWidth * this.speed * Ticker.shared.elapsedMS / 1000;
+        break;
+      case Direction.Right:
+        this.body.position.x += this.gridWidth * this.speed * Ticker.shared.elapsedMS / 1000;
+        break;
+      default:
+        break;
+    }
+
+    if (this.IsOutOfBounds(this.body.position.x, this.body.position.y))
+      this.TriggerOutOfBounds();
   }
 
   TriggerOutOfBounds() { }

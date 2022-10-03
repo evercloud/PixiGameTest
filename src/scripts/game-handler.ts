@@ -1,6 +1,7 @@
 import { Player } from './player';
 import { Application, Graphics, Text, Ticker } from 'pixi.js';
 import { Direction } from './main';
+import { Enemy } from './enemy';
 
 
 export class GameHandler {
@@ -12,6 +13,11 @@ export class GameHandler {
     timerText: Text;
     player: Player;
 
+    enemySpawnDuration: number = 5;
+    maxEnemies: number = 8;
+    enemyColor: number = 0xf00000;
+    enemies: Enemy[] = [];
+
     constructor(app: Application) {
         this.appRef = app;
         this.gridWidth = app.screen.width / this.gridSpacing;
@@ -22,6 +28,7 @@ export class GameHandler {
         this.DrawStage();
         this.InitializeTimer();
         this.CreatePlayer();
+        this.SpawnRandomEnemy();
         Ticker.shared.add(this.Update, this);
     }
 
@@ -61,14 +68,32 @@ export class GameHandler {
     }
 
     private CreatePlayer(): void {
-        this.player = new Player(this, 0x3F6FDE, -this.gridWidth / 2,
-            -this.gridHeight / 2, this.gridWidth, this.gridHeight, Direction.Right, 5);
+        this.player = new Player(this, 0x3F6FDE, this.appRef.screen.width / 2,
+            this.appRef.screen.height / 2, this.gridWidth, this.gridHeight, 5);
+    }
+
+    private SpawnRandomEnemy() {
+
+        let temp: Enemy = new Enemy(this, this.enemyColor, this.GetRandomGridWidth(),
+            this.GetRandomGridHeight(), this.gridWidth, this.gridHeight, 2);
+        this.enemies.push(temp);
+        this.enemies[this.enemies.length - 1].AssignPlayer(this.player);
+    }
+
+    GetRandomGridWidth(): number {
+        let grid = Math.floor(Math.random() * this.gridSpacing);
+        return grid * this.gridWidth + this.gridWidth / 2;
+    }
+
+    GetRandomGridHeight(): number {
+        let grid = Math.floor(Math.random() * this.gridSpacing);
+        return grid * this.gridHeight + this.gridHeight / 2;
     }
 
     private Update(): void {
         this.UpdateTimerText();
         this.UpdatePlayer();
-
+        this.UpdateEnemies();
         //update enemy positions
         //check for collisions
     }
@@ -79,6 +104,13 @@ export class GameHandler {
 
     private UpdatePlayer(): void {
         this.player.Update();
+    }
+
+    private UpdateEnemies(): void {
+        for (let i = 0; i < this.enemies.length; i++) {
+            if (this.enemies[i].isActive)
+                this.enemies[i].Update();
+        }
     }
 
     TriggerGameOver(): void {
