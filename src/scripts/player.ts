@@ -4,19 +4,19 @@ import { Direction } from "./main";
 export class Player extends BoundedCharacter {
     // see characters.ts for BoundedCharacter
 
-    override SetColor() {
+    protected override SetColor(): void {
         this.color = 0x4486f4;
     }
 
-    override TriggerOutOfBounds(): void {
+    protected override TriggerOutOfBounds(): void {
         this.TriggerGameOver();
     }
 
-    TriggerGameOver(): void {
+    private TriggerGameOver(): void {
         this.gameHandler.TriggerGameOver();
     }
 
-    GetCurrentDirection(): Direction {
+    public GetCurrentDirection(): Direction {
         return this.currentDirection;
     }
 }

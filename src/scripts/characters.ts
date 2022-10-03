@@ -131,5 +131,5 @@ export abstract class BoundedCharacter extends Character {
       this.TriggerOutOfBounds();
   }
 
-  abstract TriggerOutOfBounds(): void;
+  protected abstract TriggerOutOfBounds(): void;
 }

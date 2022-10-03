@@ -1,5 +1,4 @@
-import { Graphics } from "pixi.js";
-import { Character, BoundedCharacter } from "./characters";
+import { BoundedCharacter } from "./characters";
 import { Direction } from "./main";
 import { Player } from "./player";
 
@@ -8,7 +7,7 @@ export abstract class Enemy extends BoundedCharacter {
     protected isActive: boolean = false;
     protected playerRef: Player;
 
-    //for debugging use
+    //FOR DEBUGGING USE
     /*protected targetDebug = new Graphics();
     protected InitializeDebug(): void {
         this.targetDebug.beginFill(0xff0000);
@@ -75,9 +74,10 @@ export abstract class Enemy extends BoundedCharacter {
     }
 }
 
+//points at player
 export class EnemyA extends Enemy {
     protected SetColor() {
-        this.color = 0xff860f;
+        this.color = 0xda483b;
     }
 
     UpdateDestination(): void {
@@ -91,7 +91,7 @@ export class EnemyA extends Enemy {
 //points ahead of player
 export class EnemyB extends Enemy {
     protected SetColor(): void {
-        this.color = 0xda483b;
+        this.color = 0xff860f;
     }
 
     protected UpdateDestination(): void {
@@ -124,7 +124,7 @@ export class EnemyB extends Enemy {
 //points behind of player
 export class EnemyC extends Enemy {
     protected SetColor(): void {
-        this.color = 0xffc718;
+        this.color = 0xfcd41a;
     }
 
     protected UpdateDestination(): void {

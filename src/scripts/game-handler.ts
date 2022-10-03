@@ -5,18 +5,19 @@ import { Enemy, EnemyA, EnemyB, EnemyC } from './enemy';
 
 export class GameHandler {
 
-    appRef: Application;
-    gridSpacing: number = 15;
-    gridWidth: number;
-    gridHeight: number;
-    timerText: Text;
-    player: Player;
+    //shared variables
+    public appRef: Application;
+    public player: Player;
 
-    enemySpawnDuration: number = 5;
-    currentSpawnTimer: number = 0;
-    maxEnemies: number = 8;
-    enemyColor: number = 0xf00000;
-    enemies: Enemy[] = [];
+    private gridSpacing: number = 15;
+    private gridWidth: number;
+    private gridHeight: number;
+    private timerText: Text;
+
+    private enemySpawnDuration: number = 5;
+    private currentSpawnTimer: number = 0;
+    private maxEnemies: number = 8;
+    private enemies: Enemy[] = [];
 
     constructor(app: Application) {
         this.appRef = app;
@@ -24,10 +25,10 @@ export class GameHandler {
         this.gridHeight = app.screen.height / this.gridSpacing;
     }
 
-    Initialize(): void {
+    public Initialize(): void {
         this.DrawStage();
-        this.InitializeTimer();
         this.CreatePlayer();
+        this.InitializeTimer();
         Ticker.shared.add(this.Update, this);
     }
 
@@ -80,7 +81,6 @@ export class GameHandler {
     }
 
     private SpawnRandomEnemy(): void {
-
         this.enemies.push(this.InstantiateRandomEnemy());
         this.enemies[this.enemies.length - 1].AssignPlayer(this.player);
     }
@@ -100,7 +100,6 @@ export class GameHandler {
             default:
                 break;
         }
-
     }
 
     public GetRandomGridWidth(): number {
@@ -137,7 +136,7 @@ export class GameHandler {
         }
     }
 
-    TriggerGameOver(): void {
+    public TriggerGameOver(): void {
         Ticker.shared.stop();
         this.timerText.y = this.appRef.screen.height / 2;
         this.timerText.text = "GAMEOVER! TIME: " + Math.round(Ticker.shared.lastTime / 1000);
