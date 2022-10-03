@@ -17,8 +17,17 @@ export class Enemy extends BoundedCharacter {
     }
 
     override Update(): void {
+        this.CheckForCollision();
         this.UpdateDestination();
         this.UpdatePosition();
+    }
+
+    CheckForCollision(): void {
+        let distance: number = Math.sqrt(Math.pow(Math.abs(this.playerRef.GetPositionY() - this.GetPositionY()), 2) +
+            Math.pow(Math.abs(this.playerRef.GetPositionX() - this.GetPositionX()), 2));
+
+        if (distance < this.gridWidth)// Math.sqrt(2) * this.gridWidth / 2)
+            this.gameHandler.TriggerGameOver();
     }
 
     UpdateDestination(): void {
