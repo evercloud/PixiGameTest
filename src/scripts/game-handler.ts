@@ -14,6 +14,7 @@ export class GameHandler {
     player: Player;
 
     enemySpawnDuration: number = 5;
+    currentSpawnTimer: number = 0;
     maxEnemies: number = 8;
     enemyColor: number = 0xf00000;
     enemies: Enemy[] = [];
@@ -28,7 +29,6 @@ export class GameHandler {
         this.DrawStage();
         this.InitializeTimer();
         this.CreatePlayer();
-        this.SpawnRandomEnemy();
         Ticker.shared.add(this.Update, this);
     }
 
@@ -72,6 +72,14 @@ export class GameHandler {
             this.appRef.screen.height / 2, this.gridWidth, this.gridHeight, 5);
     }
 
+    private HandleEnemySpawn() {
+        this.currentSpawnTimer += Ticker.shared.elapsedMS / 1000;
+        if (this.currentSpawnTimer > this.enemySpawnDuration) {
+            this.currentSpawnTimer = 0;
+            this.SpawnRandomEnemy();
+        }
+    }
+
     private SpawnRandomEnemy() {
 
         let temp: Enemy = new Enemy(this, this.enemyColor, this.GetRandomGridWidth(),
@@ -91,11 +99,12 @@ export class GameHandler {
     }
 
     private Update(): void {
+        if (this.enemies.length < this.maxEnemies)
+            this.HandleEnemySpawn();
+
         this.UpdateTimerText();
         this.UpdatePlayer();
         this.UpdateEnemies();
-        //update enemy positions
-        //check for collisions
     }
 
     private UpdateTimerText(): void {
