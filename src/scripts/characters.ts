@@ -2,21 +2,21 @@ import { Graphics, Ticker } from 'pixi.js';
 import { Direction } from './main';
 import { GameHandler } from './game-handler';
 
-export class Character {
-  gameHandler: GameHandler;
-  speed: number;
-  body = new Graphics();
-  color: number;
-  currentDirection: Direction;
-  nextDirection: Direction;
-  gridHeight: number;
-  gridWidth: number;
-  threshold: number = 3;
+export abstract class Character {
+  protected gameHandler: GameHandler;
+  protected speed: number;
+  protected body = new Graphics();
+  protected color: number;
+  protected currentDirection: Direction;
+  protected nextDirection: Direction;
+  protected gridHeight: number;
+  protected gridWidth: number;
+  protected threshold: number = 3;
 
-  constructor(gameHandler: GameHandler, color: number, posX: number, posY: number, width: number,
+  constructor(gameHandler: GameHandler, posX: number, posY: number, width: number,
     height: number, speed: number) {
     this.gameHandler = gameHandler;
-    this.color = color;
+    this.SetColor();
     this.body.beginFill(this.color);
     this.gridWidth = width;
     this.gridHeight = height;
@@ -32,7 +32,9 @@ export class Character {
     this.speed = speed;
   }
 
-  GetRandomDirection(): Direction {
+  protected abstract SetColor(): void;
+
+  protected GetRandomDirection(): Direction {
     let rand = Math.floor(Math.random() * 4);
     switch (rand) {
       case 0: return Direction.Up;
@@ -43,22 +45,21 @@ export class Character {
     }
   }
 
-  SetNextDirection(direction: Direction) {
+  public SetNextDirection(direction: Direction): void {
     this.nextDirection = direction;
   }
 
-  GetPositionX(): number {
+  public GetPositionX(): number {
     return this.body.position.x;
   }
 
-  GetPositionY(): number {
+  public GetPositionY(): number {
     return this.body.position.y;
   }
 
+  protected abstract UpdatePosition(): void;
 
-  UpdatePosition() { }
-
-  HandleChangeDirection() {
+  protected HandleChangeDirection(): void {
     let distance: number;
     let temp: number;
 
@@ -91,7 +92,7 @@ export class Character {
   }
 }
 
-export class BoundedCharacter extends Character {
+export abstract class BoundedCharacter extends Character {
   IsOutOfBounds(x: number, y: number): boolean {
     if (x + this.threshold < 0 + this.gridWidth / 2 ||
       x - this.threshold > this.gameHandler.appRef.screen.width - this.gridWidth / 2 ||
@@ -101,11 +102,11 @@ export class BoundedCharacter extends Character {
     return false;
   }
 
-  Update() {
+  public Update() {
     this.UpdatePosition();
   }
 
-  UpdatePosition() {
+  protected UpdatePosition() {
     if (this.currentDirection != this.nextDirection)
       this.HandleChangeDirection();
 
@@ -130,5 +131,5 @@ export class BoundedCharacter extends Character {
       this.TriggerOutOfBounds();
   }
 
-  TriggerOutOfBounds() { }
+  abstract TriggerOutOfBounds(): void;
 }

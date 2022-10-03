@@ -1,7 +1,6 @@
 import { Player } from './player';
 import { Application, Graphics, Text, Ticker } from 'pixi.js';
-import { Direction } from './main';
-import { Enemy } from './enemy';
+import { Enemy, EnemyA, EnemyB, EnemyC } from './enemy';
 
 
 export class GameHandler {
@@ -68,7 +67,7 @@ export class GameHandler {
     }
 
     private CreatePlayer(): void {
-        this.player = new Player(this, 0x3F6FDE, this.appRef.screen.width / 2,
+        this.player = new Player(this, this.appRef.screen.width / 2,
             this.appRef.screen.height / 2, this.gridWidth, this.gridHeight, 5);
     }
 
@@ -80,20 +79,36 @@ export class GameHandler {
         }
     }
 
-    private SpawnRandomEnemy() {
+    private SpawnRandomEnemy(): void {
 
-        let temp: Enemy = new Enemy(this, this.enemyColor, this.GetRandomGridWidth(),
-            this.GetRandomGridHeight(), this.gridWidth, this.gridHeight, 2);
-        this.enemies.push(temp);
+        this.enemies.push(this.InstantiateRandomEnemy());
         this.enemies[this.enemies.length - 1].AssignPlayer(this.player);
     }
 
-    GetRandomGridWidth(): number {
+    private InstantiateRandomEnemy(): Enemy {
+        let rand: number = Math.floor(Math.random() * 3);
+        switch (rand) {
+            case 0:
+                return new EnemyA(this, this.GetRandomGridWidth(), this.GetRandomGridHeight(),
+                    this.gridWidth, this.gridHeight, 4);
+            case 1:
+                return new EnemyB(this, this.GetRandomGridWidth(), this.GetRandomGridHeight(),
+                    this.gridWidth, this.gridHeight, 4);
+            case 2:
+                return new EnemyC(this, this.GetRandomGridWidth(), this.GetRandomGridHeight(),
+                    this.gridWidth, this.gridHeight, 4);
+            default:
+                break;
+        }
+
+    }
+
+    public GetRandomGridWidth(): number {
         let grid = Math.floor(Math.random() * this.gridSpacing);
         return grid * this.gridWidth + this.gridWidth / 2;
     }
 
-    GetRandomGridHeight(): number {
+    public GetRandomGridHeight(): number {
         let grid = Math.floor(Math.random() * this.gridSpacing);
         return grid * this.gridHeight + this.gridHeight / 2;
     }
@@ -117,7 +132,7 @@ export class GameHandler {
 
     private UpdateEnemies(): void {
         for (let i = 0; i < this.enemies.length; i++) {
-            if (this.enemies[i].isActive)
+            if (this.enemies[i].IsActive())
                 this.enemies[i].Update();
         }
     }
