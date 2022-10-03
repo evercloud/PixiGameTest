@@ -2,18 +2,20 @@ import { Player } from './player';
 import { Application, Graphics, Text, Ticker } from 'pixi.js';
 import { Enemy, EnemyA, EnemyB, EnemyC } from './enemy';
 
-
 export class GameHandler {
 
     //shared variables
     public appRef: Application;
     public player: Player;
 
+    //stage
     private gridSpacing: number = 15;
     private gridWidth: number;
     private gridHeight: number;
+    private timer: number = 0;
     private timerText: Text;
 
+    //enemies
     private enemySpawnDuration: number = 5;
     private currentSpawnTimer: number = 0;
     private maxEnemies: number = 8;
@@ -55,13 +57,14 @@ export class GameHandler {
     }
 
     private InitializeTimer(): void {
-        this.timerText = this.appRef.stage.addChild(new Text('SURVIVAL TIME: ', {
+        this.timerText = this.appRef.stage.addChild(new Text('USE WASD KEYS TO MOVE\nDON\'T LET THEM GET YOU!', {
             fontFamily: 'Arial',
             fontSize: 24,
             fill: 0xffffff,
             align: 'center'
         }));
 
+        this.timerText.zIndex = 100; //make sure it's drawn above everything
         this.timerText.anchor.set(0.5);
         this.timerText.x = this.appRef.screen.width / 2;
         this.timerText.y = 50;
@@ -122,7 +125,8 @@ export class GameHandler {
     }
 
     private UpdateTimerText(): void {
-        this.timerText.text = 'SURVIVAL TIME: ' + Math.round(Ticker.shared.lastTime / 1000);
+        this.timer += Ticker.shared.elapsedMS / 1000;
+        this.timerText.text = 'SURVIVAL TIME: ' + Math.round(this.timer);
     }
 
     private UpdatePlayer(): void {

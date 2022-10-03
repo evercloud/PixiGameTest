@@ -7,19 +7,22 @@ export enum Direction { Up, Down, Left, Right }
 let app = new Application({ width: 800, height: 800 });
 document.body.appendChild(app.view);
 
-//initialize game
+//initialize game handler
 let gameHandler: GameHandler = new GameHandler(app);
 gameHandler.Initialize();
 
-//setup controls
-let keysPressed: { [key: number]: boolean } = { 87: false, 83: false, 65: false, 68: false };
-document.addEventListener('keydown', onKeyDown);
-document.addEventListener('keyup', onKeyUp);
+//handle game preparation
+app.stage.sortableChildren = true; //allow zIndex sorting for timer text
+Ticker.shared.autoStart = false;
+Ticker.shared.stop();
+Ticker.shared.add(UpdateControls);
 
-function onKeyDown(key: KeyboardEvent) {
+//intialize controls
+let keysPressed: { [key: number]: boolean } = { 87: false, 83: false, 65: false, 68: false };
+function OnKeyDown(key: KeyboardEvent) {
     keysPressed[key.keyCode] = true;
 }
-function onKeyUp(key: KeyboardEvent) {
+function OnKeyUp(key: KeyboardEvent) {
     keysPressed[key.keyCode] = false;
 }
 function UpdateControls() {
@@ -29,4 +32,37 @@ function UpdateControls() {
     if (keysPressed[65]) { gameHandler.player.SetNextDirection(Direction.Left); } //A
     else if (keysPressed[68]) { gameHandler.player.SetNextDirection(Direction.Right); } //D
 }
-Ticker.shared.add(UpdateControls);
+
+//wait for input
+document.addEventListener('keydown', OnKeyPressedStart);
+
+function OnKeyPressedStart(key: KeyboardEvent) {
+    if (key.keyCode != 87 && key.keyCode != 83 && key.keyCode != 65 && key.keyCode != 68)
+        return;
+
+    //remove this listener
+    document.removeEventListener('keydown', OnKeyPressedStart);
+    //and setup controls
+    document.addEventListener('keydown', OnKeyDown);
+    document.addEventListener('keyup', OnKeyUp);
+
+    switch (key.keyCode) {
+        case 87:
+            gameHandler.player.SetNextDirection(Direction.Up);
+            break;
+        case 83:
+            gameHandler.player.SetNextDirection(Direction.Down);
+            break;
+        case 65:
+            gameHandler.player.SetNextDirection(Direction.Left);
+            break;
+        case 68:
+            gameHandler.player.SetNextDirection(Direction.Right);
+            break;
+        default:
+            break;
+    }
+
+    //start game
+    Ticker.shared.start();
+}
