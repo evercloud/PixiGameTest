@@ -26,3 +26,6 @@ lib
 index.d.ts
 .vscode
 .cache
+
+#suggested by webpack repo gitignore
+package-lock.json
