@@ -143,7 +143,8 @@ export class GameHandler {
     public TriggerGameOver(): void {
         Ticker.shared.stop();
         this.timerText.y = this.appRef.screen.height / 2;
-        this.timerText.text = "GAMEOVER! TIME: " + Math.round(Ticker.shared.lastTime / 1000);
+        this.timerText.text = `GAMEOVER!\nSURVIVAL TIME: ${Math.round(Ticker.shared.lastTime
+            / 1000)}\nREFRESH TO RESTART`;
     }
 }
 
